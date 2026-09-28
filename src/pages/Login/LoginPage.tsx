@@ -33,7 +33,7 @@ const FEATURES: Array<{ icon: IconType; title: string; text: string }> = [
   {
     icon: Network,
     title: 'Context-aware',
-    text: 'Your repository is indexed first, so every review sees callers, related files and conventions — not just the diff.',
+    text: 'Your repository is indexed , so every review sees callers, related files and conventions — not just the diff.',
   },
   {
     icon: Boxes,
