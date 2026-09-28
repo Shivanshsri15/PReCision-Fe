@@ -1,26 +1,47 @@
-import { AlertCircle, Database, ExternalLink, GitBranch, GitFork, GitPullRequest, Lock, RefreshCw, Star } from 'lucide-react';
+import {
+  AlertCircle,
+  Database,
+  ExternalLink,
+  GitBranch,
+  GitFork,
+  GitPullRequest,
+  Loader2,
+  Lock,
+  RefreshCw,
+  Star,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
 import { GithubIcon } from '../../../components/ui/GithubIcon';
+import { Tilt } from '../../../components/ui/Tilt';
 import { IndexStatusBadge } from '../../../components/ui/StatusBadge';
 import type { RepositoryCardModel } from '../../../features/repositories/selectors';
+import { indexProgressOpened } from '../../../features/ui/uiSlice';
 import { compactNumber, relativeTime } from '../../../utils/format';
+import { indexKey } from '../../../utils/keys';
 import { isIndexInFlight } from '../../../utils/status';
 
 interface RepositoryCardProps {
   card: RepositoryCardModel;
   onIndex: (card: RepositoryCardModel) => void;
+  /** Set while another repository is indexing; disables the index action. */
+  lockHint?: string;
 }
 
-export function RepositoryCard({ card, onIndex }: RepositoryCardProps) {
+export function RepositoryCard({ card, onIndex, lockHint }: RepositoryCardProps) {
+  const dispatch = useAppDispatch();
   const index = card.index;
   const inFlight = isIndexInFlight(index?.status);
+  const job = useAppSelector((state) =>
+    index ? state.indexJobs[indexKey(index.owner, index.repo, index.branch)] : undefined,
+  );
+  const liveProgress = inFlight && job?.status === 'running' && job.total > 0 ? `${job.processed}/${job.total} files` : null;
 
   return (
-    <Card className="flex flex-col p-5">
-      <div className="flex items-start gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white">
+    <Tilt max={4} glare className="flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-xs hover:shadow-lg">
+      <div className="depth-1 flex items-start gap-3">
+        <span className="depth-2 flex size-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white shadow-md shadow-slate-900/20">
           <GithubIcon className="size-5" />
         </span>
         <div className="min-w-0 flex-1">
@@ -53,7 +74,7 @@ export function RepositoryCard({ card, onIndex }: RepositoryCardProps) {
       <div className="mt-4 grid grid-cols-2 gap-3 rounded-lg bg-slate-50 px-3 py-2.5 text-xs">
         <div>
           <p className="text-slate-500">Last indexed</p>
-          <p className="font-medium text-slate-800">{inFlight ? 'Indexing now…' : relativeTime(index?.lastIndexedAt)}</p>
+          <p className="font-medium text-slate-800">{inFlight ? (liveProgress ? `Indexing ${liveProgress}` : 'Indexing now…') : relativeTime(index?.lastIndexedAt)}</p>
         </div>
         <div>
           <p className="text-slate-500">Chunks</p>
@@ -78,14 +99,33 @@ export function RepositoryCard({ card, onIndex }: RepositoryCardProps) {
       {index?.status === 'failed' && index.lastError && (
         <p className="mt-3 flex items-start gap-1.5 text-xs text-red-600">
           <AlertCircle className="mt-px size-3.5 shrink-0" />
-          <span className="line-clamp-2">{index.lastError}</span>
+          <span className="line-clamp-2 min-w-0 [overflow-wrap:anywhere]" title={index.lastError}>{index.lastError}</span>
         </p>
       )}
 
       <div className="mt-auto flex items-center gap-2 pt-4">
-        <Button size="sm" variant={index ? 'secondary' : 'primary'} icon={RefreshCw} loading={inFlight} onClick={() => onIndex(card)}>
-          {inFlight ? 'Indexing' : index ? 'Re-index' : 'Index branch'}
-        </Button>
+        {inFlight && index ? (
+          <Button
+            size="sm"
+            variant="secondary"
+            icon={Loader2}
+            className="[&>svg]:animate-spin"
+            onClick={() => dispatch(indexProgressOpened(indexKey(index.owner, index.repo, index.branch)))}
+          >
+            View progress
+          </Button>
+        ) : (
+          <Button
+            size="sm"
+            variant={index ? 'secondary' : 'primary'}
+            icon={RefreshCw}
+            disabled={Boolean(lockHint)}
+            title={lockHint}
+            onClick={() => onIndex(card)}
+          >
+            {index ? 'Re-index' : 'Index branch'}
+          </Button>
+        )}
         <Link
           to={`/pull-requests?repo=${encodeURIComponent(card.key)}`}
           className="inline-flex h-8 items-center gap-1.5 rounded-lg px-3 text-xs font-medium text-slate-600 hover:bg-slate-100"
@@ -102,6 +142,6 @@ export function RepositoryCard({ card, onIndex }: RepositoryCardProps) {
           <ExternalLink className="size-4" />
         </a>
       </div>
-    </Card>
+    </Tilt>
   );
 }

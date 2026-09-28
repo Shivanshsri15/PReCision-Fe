@@ -22,6 +22,8 @@ import { PrHeader } from './components/PrHeader';
 import { RunSelector } from './components/RunSelector';
 import type { PrDetailContext } from './context';
 
+const RUNNING_POLL_MS = 8_000;
+
 export function PullRequestDetailPage() {
   const params = useParams<{ owner: string; repo: string; number: string }>();
   const owner = params.owner ?? '';
@@ -47,7 +49,7 @@ export function PullRequestDetailPage() {
   const runLoading = useAppSelector((state) => selectIsRunLoading(state, run?._id));
   const findingsCount = useAppSelector((state) => selectRunFindings(state, run?._id)).length;
   const latestRun = runs.find((r) => r.status === 'completed');
-  const canAnalyze = !latestRun?.markedComplete;
+  const hasRunningRun = runs.some((r) => r.status === 'running');
 
   useEffect(() => {
     if (detail.status === 'idle') void dispatch(fetchPull({ owner, repo, number }));
@@ -60,6 +62,13 @@ export function PullRequestDetailPage() {
   useEffect(() => {
     if (run && !runFull) void dispatch(fetchRun(run._id));
   }, [dispatch, run, runFull]);
+
+  // Fallback for when the event stream misses the run finishing.
+  useEffect(() => {
+    if (!hasRunningRun) return;
+    const timer = window.setInterval(() => void dispatch(fetchPrRuns({ owner, repo, number })), RUNNING_POLL_MS);
+    return () => window.clearInterval(timer);
+  }, [dispatch, hasRunningRun, owner, repo, number]);
 
   const withRun = useCallback(
     (path: string) => (run ? `${path}${path.includes('?') ? '&' : '?'}run=${run._id}` : path),
@@ -91,9 +100,8 @@ export function PullRequestDetailPage() {
       withRun,
       diffHref,
       analyze,
-      canAnalyze,
     }),
-    [owner, repo, number, key, detail.pr, runs, run, runFull, runLoading, runsEntry.status, withRun, diffHref, analyze, canAnalyze],
+    [owner, repo, number, key, detail.pr, runs, run, runFull, runLoading, runsEntry.status, withRun, diffHref, analyze],
   );
 
   if (!Number.isInteger(number) || number <= 0) {

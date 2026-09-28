@@ -13,9 +13,11 @@ export interface Toast {
 interface UiState {
   toasts: Toast[];
   sidebarOpen: boolean;
+  /** `owner/repo@branch` whose live indexing modal is open. */
+  indexProgressKey: string | null;
 }
 
-const initialState: UiState = { toasts: [], sidebarOpen: false };
+const initialState: UiState = { toasts: [], sidebarOpen: false, indexProgressKey: null };
 
 const uiSlice = createSlice({
   name: 'ui',
@@ -33,10 +35,17 @@ const uiSlice = createSlice({
     setSidebarOpen(state, action: PayloadAction<boolean>) {
       state.sidebarOpen = action.payload;
     },
+    indexProgressOpened(state, action: PayloadAction<string>) {
+      state.indexProgressKey = action.payload;
+    },
+    indexProgressClosed(state) {
+      state.indexProgressKey = null;
+    },
   },
 });
 
-export const { showToast, dismissToast, setSidebarOpen } = uiSlice.actions;
+export const { showToast, dismissToast, setSidebarOpen, indexProgressOpened, indexProgressClosed } = uiSlice.actions;
 export const selectToasts = (state: RootState) => state.ui.toasts;
 export const selectSidebarOpen = (state: RootState) => state.ui.sidebarOpen;
+export const selectIndexProgressKey = (state: RootState) => state.ui.indexProgressKey;
 export default uiSlice.reducer;

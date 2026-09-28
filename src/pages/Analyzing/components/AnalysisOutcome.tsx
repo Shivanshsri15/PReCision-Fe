@@ -66,7 +66,7 @@ export function AnalysisFailure({ owner, repo, onRetry }: Omit<OutcomeProps, 're
   const record = useAppSelector((state) => (baseBranch ? selectIndexRecord(state, owner, repo, baseBranch) : undefined));
 
   const notIndexed = error?.status === 409;
-  const missingKey = /gemini/i.test(error?.message ?? '');
+  const keyIssue = /gemini/i.test(error?.message ?? '') && /key|quota/i.test(error?.message ?? '');
   const indexing = isIndexInFlight(record?.status);
   const indexReady = record?.status === 'ready' || record?.status === 'partial';
 
@@ -76,7 +76,11 @@ export function AnalysisFailure({ owner, repo, onRetry }: Omit<OutcomeProps, 're
         <AlertTriangle className="size-5 text-red-500" />
         <h3 className="text-sm font-semibold text-slate-900">{status === 'cancelled' ? 'Analysis cancelled' : 'Analysis failed'}</h3>
       </div>
-      {error && <p className="mt-1 text-sm text-slate-600">{error.message}</p>}
+      {error && (
+        <p className="mt-1 line-clamp-6 text-sm text-slate-600 [overflow-wrap:anywhere]" title={error.message}>
+          {error.message}
+        </p>
+      )}
 
       {notIndexed && baseBranch && (
         <div className="mt-4 flex flex-wrap items-center gap-3 rounded-lg bg-slate-50 px-3 py-2.5">
@@ -94,9 +98,9 @@ export function AnalysisFailure({ owner, repo, onRetry }: Omit<OutcomeProps, 're
       )}
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {missingKey && (
+        {keyIssue && (
           <Link to="/settings" className="inline-flex h-9 items-center gap-2 rounded-lg px-4 text-sm font-medium text-slate-700 ring-1 ring-slate-200 hover:bg-slate-50">
-            <KeyRound className="size-4" /> Add Gemini key
+            <KeyRound className="size-4" /> Manage Gemini key
           </Link>
         )}
         <Button icon={RotateCcw} onClick={onRetry} disabled={notIndexed && !indexReady}>

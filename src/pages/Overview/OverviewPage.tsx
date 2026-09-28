@@ -1,4 +1,4 @@
-import { ArrowRight, Code2, FolderGit2, History, SearchCode, Sparkles } from 'lucide-react';
+import { ArrowRight, FolderGit2, History, SearchCode, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -14,7 +14,7 @@ import { selectDashboard } from '../../features/dashboard/dashboardSlice';
 import { fetchDashboardStats } from '../../features/dashboard/dashboardThunks';
 import { fetchRecentRuns } from '../../features/reviews/reviewsThunks';
 import { selectRecentRuns, selectRecentRunsEntry } from '../../features/reviews/selectors';
-import { compactNumber, greeting } from '../../utils/format';
+import { greeting } from '../../utils/format';
 import { StatCard } from './components/StatCard';
 
 const RECENT_LIMIT = 8;
@@ -46,7 +46,7 @@ export function OverviewPage() {
         }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         <StatCard
           label="Repositories"
           icon={FolderGit2}
@@ -71,13 +71,6 @@ export function OverviewPage() {
               {stats?.severity.high ?? 0} high severity
             </span>
           }
-        />
-        <StatCard
-          label="Indexed Code"
-          icon={Code2}
-          loading={statsLoading}
-          value={compactNumber(stats?.indexedChunks ?? 0)}
-          hint={`chunks across ${compactNumber(stats?.indexedFiles ?? 0)} files`}
         />
       </div>
 

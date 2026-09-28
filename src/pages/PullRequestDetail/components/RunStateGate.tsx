@@ -1,15 +1,17 @@
-import { AlertTriangle, Loader2, Sparkles } from 'lucide-react';
+import { AlertTriangle, Loader2, Radio, Sparkles } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { Button } from '../../../components/ui/Button';
 import { Card } from '../../../components/ui/Card';
 import { EmptyState } from '../../../components/ui/EmptyState';
 import { SkeletonRows } from '../../../components/ui/Skeleton';
+import { useResumeAnalysis } from '../../../features/reviews/hooks';
 import type { ReviewRun } from '../../../types/review';
 import { usePrDetail } from '../context';
 
 /** Renders loading / empty / failed / running states; children only get a completed run. */
 export function RunStateGate({ children }: { children: (run: ReviewRun) => ReactNode }) {
-  const { run, runLoading, runsLoading, analyze, canAnalyze } = usePrDetail();
+  const { run, runLoading, runsLoading, analyze } = usePrDetail();
+  const resume = useResumeAnalysis();
 
   if (runsLoading || (run && runLoading)) {
     return (
@@ -39,7 +41,20 @@ export function RunStateGate({ children }: { children: (run: ReviewRun) => React
   if (run.status === 'running') {
     return (
       <Card>
-        <EmptyState icon={Loader2} title="This run is still in progress" description="Refresh in a moment to see its report." />
+        <EmptyState
+          icon={Loader2}
+          iconClassName="animate-spin"
+          title="This run is still in progress"
+          description="The analysis keeps running on the server. This page updates automatically when it finishes, or you can watch it live."
+          action={
+            <Button
+              icon={Radio}
+              onClick={() => resume({ owner: run.owner, repo: run.repo, number: run.pullNumber, postComments: false }, run._id)}
+            >
+              View live progress
+            </Button>
+          }
+        />
       </Card>
     );
   }
@@ -52,7 +67,7 @@ export function RunStateGate({ children }: { children: (run: ReviewRun) => React
           icon={AlertTriangle}
           title="This run failed"
           description={run.error}
-          action={canAnalyze ? <Button onClick={analyze}>Run again</Button> : undefined}
+          action={<Button onClick={analyze}>Run again</Button>}
         />
       </Card>
     );

@@ -1,4 +1,5 @@
 import { FileCode2, Folder, ShieldAlert } from 'lucide-react';
+import { Tilt } from '../../../components/ui/Tilt';
 
 const FILES = ['auth.service.ts', 'auth.controller.ts', 'types.ts', 'utils.ts'];
 
@@ -13,7 +14,8 @@ const CODE: Array<{ text: string; type?: 'add' | 'del' | 'flag' }> = [
 /** Static illustration of a review for the landing hero. */
 export function ReviewPreview() {
   return (
-    <div className="relative mx-auto w-full max-w-lg">
+    <div className="float-3d mx-auto w-full max-w-lg">
+    <Tilt max={10} className="relative">
       <div className="rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-brand-900/10">
         <div className="flex items-center gap-1.5 border-b border-slate-100 px-4 py-3">
           <span className="size-2.5 rounded-full bg-red-300" />
@@ -53,7 +55,7 @@ export function ReviewPreview() {
         </div>
       </div>
 
-      <div className="absolute -bottom-10 -left-6 w-64 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
+      <div className="depth-2 absolute -bottom-10 -left-6 w-64 rounded-xl border border-slate-200 bg-white p-4 shadow-xl">
         <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-800">
           <ShieldAlert className="size-3.5 text-brand-600" /> AI Review
         </p>
@@ -65,6 +67,7 @@ export function ReviewPreview() {
           </div>
         </div>
       </div>
+    </Tilt>
     </div>
   );
 }

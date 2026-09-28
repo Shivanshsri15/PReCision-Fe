@@ -9,9 +9,18 @@ interface EmptyStateProps {
   action?: ReactNode;
   tone?: 'default' | 'error';
   className?: string;
+  iconClassName?: string;
 }
 
-export function EmptyState({ icon: Icon, title, description, action, tone = 'default', className }: EmptyStateProps) {
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+  tone = 'default',
+  className,
+  iconClassName,
+}: EmptyStateProps) {
   return (
     <div className={clsx('flex flex-col items-center justify-center px-6 py-12 text-center', className)}>
       <div
@@ -20,10 +29,12 @@ export function EmptyState({ icon: Icon, title, description, action, tone = 'def
           tone === 'error' ? 'bg-red-50 text-red-600' : 'bg-brand-50 text-brand-600',
         )}
       >
-        <Icon className="size-5" />
+        <Icon className={clsx('size-5', iconClassName)} />
       </div>
       <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-      {description && <p className="mt-1 max-w-sm text-sm text-slate-500">{description}</p>}
+      {description && (
+        <p className="mt-1 line-clamp-6 max-w-md text-sm text-slate-500 [overflow-wrap:anywhere]">{description}</p>
+      )}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );

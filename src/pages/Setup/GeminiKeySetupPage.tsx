@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { Logo } from '../../components/layout/Logo';
 import { Button } from '../../components/ui/Button';
 import { PageSpinner } from '../../components/ui/Spinner';
+import { Tilt } from '../../components/ui/Tilt';
 import { logout } from '../../features/auth/authSlice';
 import { selectDisplayName } from '../../features/auth/selectors';
 import { selectSettings } from '../../features/settings/settingsSlice';
@@ -29,15 +30,16 @@ export function GeminiKeySetupPage() {
   if (!geminiKey) return <PageSpinner label="Loading your workspace…" />;
 
   return (
-    <div className="min-h-full bg-[radial-gradient(ellipse_at_top_left,var(--color-brand-100),transparent_55%),linear-gradient(to_bottom,white,var(--color-slate-50))]">
-      <header className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
+    <div className="relative min-h-full overflow-hidden bg-[radial-gradient(ellipse_at_top_left,var(--color-brand-100),transparent_55%),linear-gradient(to_bottom,white,var(--color-slate-50))]">
+      <div aria-hidden className="perspective-grid pointer-events-none absolute inset-x-0 top-0 h-80 opacity-60" />
+      <header className="relative mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
         <Logo to="/setup/gemini-key" />
         <Button variant="ghost" size="sm" icon={LogOut} onClick={() => dispatch(logout())}>
           Sign out
         </Button>
       </header>
 
-      <main className="mx-auto max-w-3xl px-6 pb-24 pt-6">
+      <main className="relative mx-auto max-w-3xl px-6 pb-24 pt-6">
         <p className="text-sm font-medium text-brand-600">One last step{name ? `, ${name}` : ''}</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Add your Gemini API key</h1>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-600">
@@ -47,9 +49,11 @@ export function GeminiKeySetupPage() {
 
         <ul className="mt-6 grid gap-3 sm:grid-cols-3">
           {USES.map(({ icon: Icon, text }) => (
-            <li key={text} className="flex items-start gap-2.5 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-600">
-              <Icon className="mt-0.5 size-4 shrink-0 text-brand-600" />
-              {text}
+            <li key={text}>
+              <Tilt max={8} className="flex h-full items-start gap-2.5 rounded-lg border border-slate-200 bg-white p-3 text-xs text-slate-600 hover:shadow-md">
+                <Icon className="depth-2 mt-0.5 size-4 shrink-0 text-brand-600" />
+                <span className="depth-1">{text}</span>
+              </Tilt>
             </li>
           ))}
         </ul>

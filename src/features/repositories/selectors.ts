@@ -123,3 +123,15 @@ export const selectRepoOptions = createSelector([selectRepositoryCards], (cards)
 export const selectInFlightIndexRecords = createSelector([selectIndexRecords], (records) =>
   Object.values(records).filter((record) => isIndexInFlight(record.status)),
 );
+
+/** Key of the full index currently running, if any — the server runs one at a time per user. */
+export const selectActiveIndexKey = (state: RootState): string | null => {
+  const requested = Object.keys(state.repositories.indexingKeys)[0];
+  if (requested) return requested;
+  const job = Object.entries(state.indexJobs).find(([, job]) => job.status === 'running' && job.kind === 'full');
+  if (job) return job[0];
+  const record = Object.values(state.repositories.indexRecords).find((r) => isIndexInFlight(r.status));
+  return record ? recordKey(record) : null;
+};
+
+const recordKey = (record: RepoIndexRecord) => indexKey(record.owner, record.repo, record.branch);
