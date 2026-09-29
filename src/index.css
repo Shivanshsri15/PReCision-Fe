@@ -171,3 +171,134 @@
     animation: none;
   }
 }
+
+@keyframes critter-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes critter-breathe {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.03, 0.96);
+  }
+}
+
+@keyframes critter-hop {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  20% {
+    transform: translateY(2px) scale(1.12, 0.86);
+  }
+  50% {
+    transform: translateY(-24px) scale(0.94, 1.08);
+  }
+  80% {
+    transform: translateY(0) scale(1.06, 0.94);
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+@keyframes critter-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@keyframes critter-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes zzz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(14px, -28px) scale(1.1);
+  }
+}
+
+@keyframes wake-shine {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+
+.critter-bob {
+  animation: critter-bob 2.4s ease-in-out infinite;
+}
+
+.critter-breathe {
+  animation: critter-breathe 3.2s ease-in-out infinite;
+  transform-origin: bottom center;
+}
+
+.critter-hop {
+  animation: critter-hop 550ms cubic-bezier(0.3, 0.7, 0.4, 1);
+  transform-origin: bottom center;
+}
+
+.critter-blink {
+  animation: critter-blink 4.5s infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.critter-glow {
+  animation: critter-glow 1.6s ease-in-out infinite;
+}
+
+.zzz {
+  animation: zzz 2.7s ease-out infinite;
+  opacity: 0;
+}
+
+.wake-shine {
+  animation: wake-shine 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .critter-bob,
+  .critter-breathe,
+  .critter-hop,
+  .critter-blink,
+  .critter-glow,
+  .zzz,
+  .wake-shine {
+    animation: none;
+  }
+
+  .zzz {
+    opacity: 1;
+  }
+}
