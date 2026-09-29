@@ -18,8 +18,6 @@ export interface PrDetailContext {
   /** Diff tab link that focuses a finding's file and line. */
   diffHref: (finding: Pick<Finding, 'file' | 'line'>) => string;
   analyze: () => void;
-  /** False once the PR's latest review is marked complete. */
-  canAnalyze: boolean;
 }
 
 export const usePrDetail = () => useOutletContext<PrDetailContext>();

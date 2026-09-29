@@ -48,7 +48,7 @@ export function RunsTable({ runs, showRepository = true, activeRunId }: RunsTabl
             </TD>
             <TD>
               {run.status === 'failed' ? (
-                <span className="line-clamp-1 max-w-56 text-xs text-red-600" title={run.error}>
+                <span className="line-clamp-1 max-w-56 text-xs text-red-600 [overflow-wrap:anywhere]" title={run.error}>
                   {run.error ?? 'Failed'}
                 </span>
               ) : (

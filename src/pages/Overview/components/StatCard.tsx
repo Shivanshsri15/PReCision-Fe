@@ -1,7 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { Card } from '../../../components/ui/Card';
 import { Skeleton } from '../../../components/ui/Skeleton';
+import { Tilt } from '../../../components/ui/Tilt';
 
 interface StatCardProps {
   label: string;
@@ -13,19 +13,19 @@ interface StatCardProps {
 
 export function StatCard({ label, value, hint, icon: Icon, loading }: StatCardProps) {
   return (
-    <Card className="p-5">
-      <div className="flex items-center justify-between">
+    <Tilt max={8} glare className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs hover:shadow-lg">
+      <div className="depth-1 flex items-center justify-between">
         <p className="text-sm font-medium text-slate-600">{label}</p>
-        <span className="flex size-8 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+        <span className="depth-2 flex size-9 items-center justify-center rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-md shadow-brand-500/30">
           <Icon className="size-4" />
         </span>
       </div>
       {loading ? (
         <Skeleton className="mt-3 h-8 w-20" />
       ) : (
-        <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
+        <p className="depth-2 mt-2 text-3xl font-bold tracking-tight text-slate-900">{value}</p>
       )}
-      <div className="mt-1 text-xs text-slate-500">{hint}</div>
-    </Card>
+      <div className="depth-1 mt-1 text-xs text-slate-500">{hint}</div>
+    </Tilt>
   );
 }

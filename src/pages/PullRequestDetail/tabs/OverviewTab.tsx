@@ -7,6 +7,7 @@ import { FindingCard } from '../../../components/review/FindingCard';
 import { SeverityCounts } from '../../../components/review/SeverityCounts';
 import { Card, CardHeader } from '../../../components/ui/Card';
 import { ScoreRing } from '../../../components/ui/ScoreRing';
+import { Tilt } from '../../../components/ui/Tilt';
 import { selectRunFindings } from '../../../features/reviews/selectors';
 import { DOMAIN_ORDER } from '../../../utils/domains';
 import { countBySeverity, findingKey } from '../../../utils/findings';
@@ -33,19 +34,25 @@ function OverviewContent({ runId }: { runId: string }) {
   return (
     <div className="space-y-6">
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card className="p-5">
-          <h3 className="text-sm font-semibold text-slate-900">AI Review</h3>
-          <p className="mb-4 mt-0.5 text-sm text-slate-500">{pluralize(findings.length, 'finding')} detected</p>
-          <SeverityCounts counts={counts} />
-        </Card>
+        <Tilt max={4} glare className="rounded-xl border border-slate-200 bg-white p-5 shadow-xs hover:shadow-lg">
+          <h3 className="depth-1 text-sm font-semibold text-slate-900">AI Review</h3>
+          <p className="depth-1 mb-4 mt-0.5 text-sm text-slate-500">{pluralize(findings.length, 'finding')} detected</p>
+          <div className="depth-2">
+            <SeverityCounts counts={counts} />
+          </div>
+        </Tilt>
 
-        <Card className="flex items-center gap-5 p-5">
-          {score !== null && <ScoreRing score={score} caption="Code quality" />}
-          <div className="min-w-0">
+        <Tilt max={4} glare className="flex items-center gap-5 rounded-xl border border-slate-200 bg-white p-5 shadow-xs hover:shadow-lg">
+          {score !== null && (
+            <div className="depth-2">
+              <ScoreRing score={score} caption="Code quality" />
+            </div>
+          )}
+          <div className="depth-1 min-w-0">
             <h3 className="text-sm font-semibold text-slate-900">Overall Assessment</h3>
             <p className="mt-1.5 text-sm text-slate-600">{report?.overallSummary ?? 'No summary available.'}</p>
           </div>
-        </Card>
+        </Tilt>
       </div>
 
       {run?.postedComments && run.postedComments.length > 0 && (

@@ -19,6 +19,7 @@ import { selectAuthError, selectLoginStatus } from '../../features/auth/selector
 import { Logo } from '../../components/layout/Logo';
 import { Button } from '../../components/ui/Button';
 import { GithubIcon } from '../../components/ui/GithubIcon';
+import { Tilt } from '../../components/ui/Tilt';
 import { ReviewPreview } from './components/ReviewPreview';
 
 type IconType = ComponentType<{ className?: string }>;
@@ -33,7 +34,7 @@ const FEATURES: Array<{ icon: IconType; title: string; text: string }> = [
   {
     icon: Network,
     title: 'Context-aware',
-    text: 'Your repository is indexed first, so every review sees callers, related files and conventions — not just the diff.',
+    text: 'Your repository is indexed , so every review sees callers, related files and conventions — not just the diff.',
   },
   {
     icon: Boxes,
@@ -80,7 +81,7 @@ export function LoginPage() {
   const error = useAppSelector(selectAuthError);
 
   return (
-    <div className="min-h-full bg-[radial-gradient(ellipse_at_top_left,var(--color-brand-100),transparent_55%),linear-gradient(to_bottom,white,var(--color-slate-50))]">
+    <div className="min-h-full overflow-x-clip bg-[radial-gradient(ellipse_at_top_left,var(--color-brand-100),transparent_55%),linear-gradient(to_bottom,white,var(--color-slate-50))]">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Logo to="/login" />
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 sm:flex">
@@ -91,20 +92,37 @@ export function LoginPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-6 pb-24">
-        <div className="grid items-center gap-16 pt-8 lg:grid-cols-2 lg:pt-14">
+        <div className="relative flex min-h-[calc(100svh-4.5rem)] flex-col justify-center pb-16 pt-4">
+          <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-0 h-1/2 overflow-hidden">
+            <div className="perspective-grid absolute inset-x-0 top-0 h-[200%]" />
+          </div>
+
+          <div className="relative grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-16">
           <section>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 ring-1 ring-brand-100">
               AI pull request reviews for GitHub
             </span>
-            <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-5xl">
+            <h1 className="mt-4 text-4xl font-extrabold leading-tight tracking-tight text-slate-900 xl:text-5xl">
               Code review that understands your entire codebase.
             </h1>
-            <p className="mt-4 max-w-lg text-lg leading-relaxed text-slate-600">
+            <p className="mt-4 max-w-lg text-base leading-relaxed text-slate-600 sm:text-lg">
               PReCision reviews each pull request with the context of the whole repository, so it catches broken
               contracts, security gaps and regressions a diff-only review would miss.
             </p>
+            <ul className="mt-6 flex flex-wrap gap-2">
+              {FEATURES.slice(0, 3).map(({ icon: Icon, title }) => (
+                <li key={title} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/70 px-3 py-1 text-xs font-medium text-slate-700">
+                  <Icon className="size-3.5 text-brand-600" />
+                  {title}
+                </li>
+              ))}
+            </ul>
+          </section>
 
-            <div className="mt-8 max-w-md rounded-2xl border border-slate-200 bg-white/80 p-5 shadow-sm backdrop-blur">
+          <Tilt max={5} glare className="rounded-2xl">
+            <div className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-xl shadow-brand-900/10 backdrop-blur">
+              <h2 className="text-lg font-semibold text-slate-900">Get started</h2>
+              <p className="mb-5 mt-0.5 text-sm text-slate-500">Sign in with the GitHub account that owns your repositories.</p>
               <Button
                 variant="dark"
                 size="lg"
@@ -150,26 +168,43 @@ export function LoginPage() {
                 No password to create. We only use GitHub to identify you and access the repositories you choose to review.
               </p>
             </div>
-          </section>
+          </Tilt>
+          </div>
 
-          <section className="hidden lg:block">
-            <ReviewPreview />
-          </section>
+          <a
+            href="#preview"
+            className="absolute bottom-4 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-xs font-medium text-slate-400 hover:text-slate-600 sm:flex"
+          >
+            Scroll to explore
+            <ChevronDown className="animate-scroll-cue size-4" />
+          </a>
         </div>
 
-        <section id="features" className="mt-28 scroll-mt-8">
+        <section id="preview" className="scroll-mt-8 pt-12">
+          <h2 className="text-center text-sm font-semibold uppercase tracking-wider text-brand-600">See it in action</h2>
+          <p className="mt-2 text-center text-2xl font-bold tracking-tight text-slate-900">
+            Findings land on the exact line that needs attention
+          </p>
+          <div className="mt-12 pb-10 [perspective:1400px]">
+            <ReviewPreview />
+          </div>
+        </section>
+
+        <section id="features" className="mt-20 scroll-mt-8">
           <h2 className="text-center text-sm font-semibold uppercase tracking-wider text-brand-600">Features</h2>
           <p className="mt-2 text-center text-2xl font-bold tracking-tight text-slate-900">
             Built for reviews you can actually act on
           </p>
           <ul className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {FEATURES.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <span className="flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                  <Icon className="size-4" />
-                </span>
-                <p className="mt-4 text-sm font-semibold text-slate-900">{title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">{text}</p>
+              <li key={title}>
+                <Tilt max={8} glare className="h-full rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-lg">
+                  <span className="depth-2 flex size-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                    <Icon className="size-4" />
+                  </span>
+                  <p className="depth-1 mt-4 text-sm font-semibold text-slate-900">{title}</p>
+                  <p className="depth-1 mt-1 text-xs leading-relaxed text-slate-500">{text}</p>
+                </Tilt>
               </li>
             ))}
           </ul>
@@ -182,15 +217,17 @@ export function LoginPage() {
           </p>
           <ol className="relative mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {STEPS.map(({ icon: Icon, title, text }, index) => (
-              <li key={title} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex items-center justify-between">
-                  <span className="flex size-8 items-center justify-center rounded-lg bg-slate-900 text-white">
-                    <Icon className="size-4" />
-                  </span>
-                  <span className="font-mono text-xs text-slate-300">0{index + 1}</span>
-                </div>
-                <p className="mt-4 text-sm font-semibold text-slate-900">{title}</p>
-                <p className="mt-1 text-xs leading-relaxed text-slate-500">{text}</p>
+              <li key={title}>
+                <Tilt max={8} className="h-full rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-lg">
+                  <div className="depth-2 flex items-center justify-between">
+                    <span className="flex size-8 items-center justify-center rounded-lg bg-slate-900 text-white">
+                      <Icon className="size-4" />
+                    </span>
+                    <span className="font-mono text-xs text-slate-300">0{index + 1}</span>
+                  </div>
+                  <p className="depth-1 mt-4 text-sm font-semibold text-slate-900">{title}</p>
+                  <p className="depth-1 mt-1 text-xs leading-relaxed text-slate-500">{text}</p>
+                </Tilt>
               </li>
             ))}
           </ol>

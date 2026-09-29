@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { ApiError } from '../../api/client';
-import type { AnalysisStartedEvent, AnalyzeParams } from '../../services/reviewApi';
+import type { AnalysisRunEvent, AnalysisStartedEvent, AnalyzeParams } from '../../services/reviewApi';
 import type { AnalysisResult, PostedReview, ReviewRun } from '../../types/review';
 import { prKey } from '../../utils/keys';
 import { isPipelineStepId, PIPELINE_STEPS, type PipelineStepId, type StepStatus } from './pipeline';
@@ -89,6 +89,11 @@ const analysisSlice = createSlice({
       },
       prepare: (meta: AnalysisStartedEvent) => withTimestamp({ meta }),
     },
+    analysisRunCreated(state, action: PayloadAction<AnalysisRunEvent>) {
+      state.runId = action.payload.runId;
+      const startedAt = action.payload.startedAt ? Date.parse(action.payload.startedAt) : NaN;
+      if (!Number.isNaN(startedAt)) state.startedAt = startedAt;
+    },
     analysisStepFinished: {
       reducer(state, action: PayloadAction<{ node: string; at: number }>) {
         const { node, at } = action.payload;
@@ -138,6 +143,7 @@ const analysisSlice = createSlice({
 export const {
   analysisBegan,
   analysisMetaReceived,
+  analysisRunCreated,
   analysisStepFinished,
   analysisResultReceived,
   analysisReviewReceived,

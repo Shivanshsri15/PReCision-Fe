@@ -2,6 +2,7 @@ import { combineReducers, configureStore, type UnknownAction } from '@reduxjs/to
 import { setUnauthorizedHandler } from '../api/client';
 import authReducer, { logout } from '../features/auth/authSlice';
 import dashboardReducer from '../features/dashboard/dashboardSlice';
+import indexJobsReducer from '../features/events/indexJobsSlice';
 import pullRequestsReducer from '../features/pullRequests/pullRequestsSlice';
 import repositoriesReducer from '../features/repositories/repositoriesSlice';
 import analysisReducer from '../features/reviews/analysisSlice';
@@ -18,6 +19,7 @@ const appReducer = combineReducers({
   reviews: reviewsReducer,
   analysis: analysisReducer,
   settings: settingsReducer,
+  indexJobs: indexJobsReducer,
   ui: uiReducer,
 });
 

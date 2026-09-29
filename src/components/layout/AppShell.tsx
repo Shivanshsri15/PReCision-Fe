@@ -1,8 +1,12 @@
 import { Outlet } from 'react-router-dom';
+import { useEventStream } from '../../features/events/useEventStream';
+import { IndexProgressModal } from '../repositories/IndexProgressModal';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 
 export function AppShell() {
+  useEventStream();
+
   return (
     <div className="min-h-full">
       <Sidebar />
@@ -12,6 +16,7 @@ export function AppShell() {
           <Outlet />
         </main>
       </div>
+      <IndexProgressModal />
     </div>
   );
 }

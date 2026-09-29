@@ -1,4 +1,4 @@
-import { ChevronLeft, FileDiff, GitBranch, Sparkles, Square } from 'lucide-react';
+import { ChevronLeft, FileDiff, GitBranch, Info, Sparkles, Square } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAppSelector } from '../../app/hooks';
@@ -83,7 +83,7 @@ export function AnalyzingPage() {
           <div className="flex items-center gap-3">
             <span className="text-sm tabular-nums text-slate-500">{formatDuration(elapsed)}</span>
             {status === 'running' && (
-              <Button variant="danger" size="sm" icon={Square} onClick={cancelActiveAnalysis}>
+              <Button variant="danger" size="sm" icon={Square} onClick={() => cancelActiveAnalysis(analysis.runId)}>
                 Cancel
               </Button>
             )}
@@ -109,6 +109,13 @@ export function AnalyzingPage() {
         </Card>
       ) : (
         <div className="space-y-6">
+          {status === 'running' && (
+            <p className="flex items-start gap-2 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800">
+              <Info className="mt-0.5 size-3.5 shrink-0" />
+              The analysis runs on the server. You can leave this page or refresh; progress picks up where it left off
+              and you'll get a notification when it finishes.
+            </p>
+          )}
           <PipelineStepper steps={analysis.steps} />
           {status === 'succeeded' && <AnalysisSuccess resultHref={resultHref} />}
           {(status === 'failed' || status === 'cancelled') && <AnalysisFailure owner={owner} repo={repo} onRetry={retry} />}

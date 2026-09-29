@@ -6,6 +6,9 @@ export const endpoints = {
     me: '/api/v1/auth/me',
     geminiKey: '/api/v1/auth/gemini-key',
   },
+  events: {
+    stream: '/api/v1/events/stream',
+  },
   github: {
     oauthUrl: '/api/v1/github/oauth/url',
     profile: '/api/v1/github/profile',
@@ -27,6 +30,8 @@ export const endpoints = {
     runs: '/api/v1/code-review/runs',
     run: (runId: string) => `/api/v1/code-review/runs/${seg(runId)}`,
     completeRun: (runId: string) => `/api/v1/code-review/runs/${seg(runId)}/complete`,
+    cancelRun: (runId: string) => `/api/v1/code-review/runs/${seg(runId)}/cancel`,
+    runStream: (runId: string) => `/api/v1/code-review/runs/${seg(runId)}/stream`,
     stats: '/api/v1/code-review/stats',
     prRuns: (owner: string, repo: string, number: number) =>
       `/api/v1/code-review${repoPath(owner, repo)}/pulls/${number}/runs`,

@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react';
+import { Clock, Info } from 'lucide-react';
 import { useState, type FormEvent } from 'react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { Button } from '../../../components/ui/Button';
@@ -6,8 +6,8 @@ import { Input, Label, Select } from '../../../components/ui/Input';
 import { Modal } from '../../../components/ui/Modal';
 import { indexBranch } from '../../../features/repositories/repositoriesThunks';
 import { selectRepoOptions, type RepositoryCardModel } from '../../../features/repositories/selectors';
-import { showToast } from '../../../features/ui/uiSlice';
-import { splitRepoKey } from '../../../utils/keys';
+import { indexProgressOpened, showToast } from '../../../features/ui/uiSlice';
+import { indexKey, splitRepoKey } from '../../../utils/keys';
 
 interface IndexBranchModalProps {
   /** Pre-selected repository; when null the modal shows a repository picker. */
@@ -28,20 +28,13 @@ export function IndexBranchModal({ card, onClose }: IndexBranchModalProps) {
     const ref = branch.trim();
     if (!repo || !ref) return;
 
-    dispatch(showToast({ tone: 'info', title: 'Indexing started', message: `${repoKey}@${ref}` }));
     void dispatch(indexBranch({ ...repo, branch: ref }))
       .unwrap()
-      .then((record) =>
-        dispatch(
-          showToast({
-            tone: 'success',
-            title: 'Indexing complete',
-            message: `${repoKey}@${ref}: ${record.fileCount ?? 0} files, ${record.chunkCount ?? 0} chunks`,
-          }),
-        ),
-      )
-      .catch(() => undefined);
+      .catch((error: { message?: string }) =>
+        dispatch(showToast({ tone: 'error', title: 'Could not start indexing', message: error.message })),
+      );
     onClose();
+    dispatch(indexProgressOpened(indexKey(repo.owner, repo.repo, ref)));
   };
 
   return (
@@ -78,11 +71,19 @@ export function IndexBranchModal({ card, onClose }: IndexBranchModalProps) {
           <p className="mt-1.5 text-xs text-slate-500">Index the base branch your pull requests target.</p>
         </div>
 
-        <p className="flex items-start gap-2 rounded-lg bg-brand-50 px-3 py-2 text-xs text-brand-800">
-          <Info className="mt-0.5 size-3.5 shrink-0" />
-          A push webhook is registered first so the index stays in sync with new commits. Large repositories can
-          take a few minutes.
-        </p>
+        <div className="flex items-start gap-2 rounded-lg bg-brand-50 px-3 py-2.5 text-xs text-brand-800">
+          <Clock className="mt-0.5 size-3.5 shrink-0" />
+          <div className="space-y-1">
+            <p className="font-semibold">This takes a while, but only once.</p>
+            <p>
+              Depending on the repository size, indexing can take a few minutes. You can watch files being indexed
+              live, or close the window and keep working; you'll be notified when it's done.
+            </p>
+            <p className="flex items-center gap-1 text-brand-700">
+              <Info className="size-3" /> A push webhook keeps the index in sync automatically after that.
+            </p>
+          </div>
+        </div>
 
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="secondary" onClick={onClose}>
