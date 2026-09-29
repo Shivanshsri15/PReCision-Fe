@@ -50,7 +50,7 @@ function StepCard({ step, state, now, stacked }: { step: PipelineStep; state: St
 
 const Connector = () => <div className="mx-auto h-4 w-px bg-slate-200" />;
 
-/** Live view of the review graph: sequential steps with the three domain agents in parallel. */
+/** Live view of the review graph: sequential steps with the four review agents in parallel. */
 export function PipelineStepper({ steps }: PipelineStepperProps) {
   const running = Object.values(steps).some((step) => step.status === 'running');
   const now = useNow(running);
@@ -71,7 +71,7 @@ export function PipelineStepper({ steps }: PipelineStepperProps) {
 
       <div className="rounded-xl border border-dashed border-slate-300 p-3">
         <p className="mb-2 px-1 text-[11px] font-medium uppercase tracking-wide text-slate-400">Parallel domain agents</p>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {parallel.map((step) => (
             <StepCard key={step.id} step={step} state={steps[step.id]} now={now} stacked />
           ))}

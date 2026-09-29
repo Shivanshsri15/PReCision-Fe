@@ -1,4 +1,4 @@
-import { FolderGit2, Plus } from 'lucide-react';
+import { FolderGit2, Loader2, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
@@ -11,6 +11,7 @@ import { Skeleton } from '../../components/ui/Skeleton';
 import { useIndexStatusPolling, useRepositoriesBootstrap } from '../../features/repositories/hooks';
 import { fetchRepos } from '../../features/repositories/repositoriesThunks';
 import {
+  selectActiveIndexKey,
   selectFilteredRepositoryCards,
   selectRepositoriesState,
   selectRepositoryLanguages,
@@ -33,6 +34,8 @@ export function RepositoriesPage() {
   const cards = useAppSelector((state) => selectFilteredRepositoryCards(state, filters));
   const languages = useAppSelector(selectRepositoryLanguages);
   const { reposStatus, hasMore, page, repos } = useAppSelector(selectRepositoriesState);
+  const activeIndexKey = useAppSelector(selectActiveIndexKey);
+  const indexLockHint = activeIndexKey ? `${activeIndexKey} is being indexed. Wait for it to finish.` : undefined;
 
   const setQuery = (value: string) =>
     setSearchParams((params) => {
@@ -49,11 +52,26 @@ export function RepositoriesPage() {
         title="Repositories"
         description="Connect and manage the GitHub repositories PReCision reviews."
         actions={
-          <Button icon={Plus} onClick={() => setModal({ card: null })} disabled={!repos.length}>
+          <Button
+            icon={Plus}
+            onClick={() => setModal({ card: null })}
+            disabled={!repos.length || Boolean(activeIndexKey)}
+            title={indexLockHint}
+          >
             Index Repository
           </Button>
         }
       />
+
+      {activeIndexKey && (
+        <p className="mb-4 flex items-center gap-2 rounded-lg bg-brand-50 px-3 py-2 text-sm text-brand-800 ring-1 ring-brand-100">
+          <Loader2 className="size-4 shrink-0 animate-spin" />
+          <span>
+            <span className="font-medium">{activeIndexKey}</span> is being indexed. Other repositories can be indexed once it
+            finishes.
+          </span>
+        </p>
+      )}
 
       <div className="mb-5 flex flex-wrap gap-3">
         <SearchInput value={query} onChange={setQuery} placeholder="Search repositories…" className="w-full sm:w-72" />
@@ -76,7 +94,12 @@ export function RepositoriesPage() {
       ) : cards.length ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {cards.map((card) => (
-            <RepositoryCard key={card.key} card={card} onIndex={(selected) => setModal({ card: selected })} />
+            <RepositoryCard
+              key={card.key}
+              card={card}
+              lockHint={indexLockHint}
+              onIndex={(selected) => setModal({ card: selected })}
+            />
           ))}
         </div>
       ) : (

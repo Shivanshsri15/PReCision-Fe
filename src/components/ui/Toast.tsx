@@ -25,8 +25,12 @@ function ToastItem({ toast }: { toast: ToastModel }) {
     <div className="animate-toast-in pointer-events-auto flex w-80 items-start gap-3 rounded-xl border border-slate-200 bg-white p-3.5 shadow-lg">
       <Icon className={clsx('mt-0.5 size-4 shrink-0', className)} />
       <div className="min-w-0 flex-1">
-        <p className="text-sm font-medium text-slate-900">{toast.title}</p>
-        {toast.message && <p className="mt-0.5 break-words text-xs text-slate-500">{toast.message}</p>}
+        <p className="text-sm font-medium text-slate-900 [overflow-wrap:anywhere]">{toast.title}</p>
+        {toast.message && (
+          <p className="mt-0.5 line-clamp-4 text-xs text-slate-500 [overflow-wrap:anywhere]" title={toast.message}>
+            {toast.message}
+          </p>
+        )}
       </div>
       <button type="button" aria-label="Dismiss" onClick={() => dispatch(dismissToast(toast.id))} className="text-slate-400 hover:text-slate-600">
         <X className="size-3.5" />

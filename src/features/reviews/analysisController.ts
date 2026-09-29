@@ -1,3 +1,5 @@
+import { reviewApi } from '../../services/reviewApi';
+
 /**
  * Holds the in-flight analysis thunk so it can be cancelled from any page;
  * the analysis keeps running when the user navigates away.
@@ -8,7 +10,9 @@ export function trackAnalysis(promise: { abort: (reason?: string) => void }): vo
   activeAnalysis = promise;
 }
 
-export function cancelActiveAnalysis(): void {
+/** Stops the run on the server (analyses outlive their stream) and detaches locally. */
+export function cancelActiveAnalysis(runId?: string | null): void {
+  if (runId) void reviewApi.cancelRun(runId).catch(() => undefined);
   activeAnalysis?.abort('cancelled');
   activeAnalysis = null;
 }

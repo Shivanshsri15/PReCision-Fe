@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import type { DomainKey, DomainReport } from '../../types/review';
+import { Tilt } from '../ui/Tilt';
 import { DOMAIN_META } from '../../utils/domains';
 import { pluralize } from '../../utils/format';
 import { scoreTone } from '../../utils/severity';
@@ -15,9 +16,9 @@ export function DomainReportCard({ domain, report }: DomainReportCardProps) {
   const findings = report?.findings.length ?? 0;
 
   return (
-    <div className="flex flex-col rounded-xl border border-slate-200 p-4">
-      <div className="flex items-center gap-2.5">
-        <span className={clsx('flex size-8 items-center justify-center rounded-lg', meta.tone)}>
+    <Tilt max={7} glare className="flex flex-col rounded-xl border border-slate-200 bg-white p-4 hover:shadow-lg">
+      <div className="depth-1 flex items-center gap-2.5">
+        <span className={clsx('depth-2 flex size-8 items-center justify-center rounded-lg', meta.tone)}>
           <Icon className="size-4" />
         </span>
         <div>
@@ -48,6 +49,6 @@ export function DomainReportCard({ domain, report }: DomainReportCardProps) {
           ))}
         </ul>
       )}
-    </div>
+    </Tilt>
   );
 }

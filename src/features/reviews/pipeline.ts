@@ -28,18 +28,18 @@ export const PIPELINE_STEPS: PipelineStep[] = [
   { id: 'qualityReview', label: 'Quality Agent', description: 'Readability and maintainability', dependsOn: ['retriever'] },
   { id: 'securityReview', label: 'Security Agent', description: 'Vulnerabilities and secrets', dependsOn: ['retriever'] },
   { id: 'performanceReview', label: 'Performance Agent', description: 'Complexity and resource usage', dependsOn: ['retriever'] },
+  { id: 'bugDetection', label: 'Bug Detection Agent', description: 'Correctness and edge cases', dependsOn: ['retriever'] },
   {
     id: 'joinNode',
     label: 'Join',
     description: 'Merge parallel reviews',
-    dependsOn: ['qualityReview', 'securityReview', 'performanceReview'],
+    dependsOn: ['qualityReview', 'securityReview', 'performanceReview', 'bugDetection'],
     hidden: true,
   },
-  { id: 'bugDetection', label: 'Bug Detection Agent', description: 'Correctness and edge cases', dependsOn: ['joinNode'] },
-  { id: 'assembler', label: 'Report Assembler', description: 'Generate the final report', dependsOn: ['bugDetection'] },
+  { id: 'assembler', label: 'Report Assembler', description: 'Generate the final report', dependsOn: ['joinNode'] },
 ];
 
-export const PARALLEL_AGENT_IDS: PipelineStepId[] = ['qualityReview', 'securityReview', 'performanceReview'];
+export const PARALLEL_AGENT_IDS: PipelineStepId[] = ['qualityReview', 'securityReview', 'performanceReview', 'bugDetection'];
 
 export const isPipelineStepId = (value: string): value is PipelineStepId =>
   PIPELINE_STEPS.some((step) => step.id === value);

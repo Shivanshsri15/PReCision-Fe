@@ -15,7 +15,7 @@ export const repoIndexApi = {
     return data;
   },
 
-  /** Resolves once the full index finishes (can take minutes on large repos). */
+  /** Starts a background full index; progress arrives on the event stream. */
   async indexBranch({ owner, repo, branch }: BranchRef): Promise<RepoIndexRecord> {
     const { data } = await apiClient.post<RepoIndexRecord>(
       endpoints.repoIndex.index(owner, repo, branch),
