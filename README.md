@@ -57,6 +57,7 @@ Data flow: component → thunk → service → `api/client`. Derived data (filte
 | Route | Page |
 |---|---|
 | `/login`, `/auth/callback` | GitHub sign-in |
+| `/demo` | Frontend-only interactive product walkthrough (no auth) |
 | `/setup/gemini-key` | Add a Gemini API key (required once) |
 | `/` | Overview: recent reviews, Analyze PR |
 | `/repositories` | Repos with index status, index/re-index a branch |

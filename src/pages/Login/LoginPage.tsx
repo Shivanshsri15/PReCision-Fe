@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import type { ComponentType } from 'react';
+import { Link } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { startGithubLogin } from '../../features/auth/authThunks';
 import { selectAuthError, selectLoginStatus } from '../../features/auth/selectors';
@@ -134,6 +135,17 @@ export function LoginPage() {
                 <GithubIcon className="size-5" />
                 {loginStatus === 'loading' ? 'Redirecting to GitHub…' : 'Continue with GitHub'}
               </Button>
+
+              <Link
+                to="/demo"
+                className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-lg text-sm font-medium text-brand-700 ring-1 ring-inset ring-brand-200 transition hover:bg-brand-50"
+              >
+                Try the interactive demo
+                <ArrowRight className="size-4" />
+              </Link>
+              <p className="mt-2 text-center text-xs text-slate-500">
+                No sign-in needed. See indexing and a sample review in about a minute.
+              </p>
 
               {error && (
                 <p role="alert" className="mt-3 flex items-start gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
