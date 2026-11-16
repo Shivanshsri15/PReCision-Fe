@@ -11,9 +11,14 @@ export type ServerStatus = 'checking' | 'waking' | 'ready';
  * take up to a minute to wake, so the app waits here instead of failing.
  */
 export function useServerStatus(): ServerStatus {
-  const [status, setStatus] = useState<ServerStatus>('checking');
+  // Frontend-only /demo walkthrough must work with the API offline.
+  const skipPing =
+    typeof window !== 'undefined' && window.location.pathname.startsWith('/demo');
+  const [status, setStatus] = useState<ServerStatus>(skipPing ? 'ready' : 'checking');
 
   useEffect(() => {
+    if (skipPing) return;
+
     let cancelled = false;
     let retryTimer: number | undefined;
     let controller: AbortController | undefined;
@@ -43,7 +48,7 @@ export function useServerStatus(): ServerStatus {
       window.clearTimeout(retryTimer);
       controller?.abort();
     };
-  }, []);
+  }, [skipPing]);
 
   return status;
 }

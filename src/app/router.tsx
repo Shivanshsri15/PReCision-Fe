@@ -4,6 +4,7 @@ import { ProtectedRoute, PublicOnlyRoute } from '../components/layout/ProtectedR
 import { GEMINI_SETUP_PATH, RequireGeminiKey } from '../components/layout/RequireGeminiKey';
 import { AnalyzingPage } from '../pages/Analyzing/AnalyzingPage';
 import { AuthCallbackPage } from '../pages/AuthCallback/AuthCallbackPage';
+import { DemoPage } from '../pages/Demo/DemoPage';
 import { LoginPage } from '../pages/Login/LoginPage';
 import { NotFoundPage } from '../pages/NotFound/NotFoundPage';
 import { OverviewPage } from '../pages/Overview/OverviewPage';
@@ -25,6 +26,7 @@ export const router = createBrowserRouter([
     children: [{ path: '/login', element: <LoginPage /> }],
   },
   { path: '/auth/callback', element: <AuthCallbackPage /> },
+  { path: '/demo/*', element: <DemoPage /> },
   {
     element: <ProtectedRoute />,
     children: [
